@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -51,5 +52,20 @@ func TestGetAddresses(t *testing.T) {
 			fmt.Println(resp.Txs[i].Inputs[j].Sequence)
 			fmt.Println(resp.Txs[i].Inputs[j].PrevOut.Spent)
 		}
+	}
+}
+
+func TestCheckAddress(t *testing.T) {
+	fmt.Println("===== TESTING CHECK ADDRESS =====")
+
+	c, e := New()
+	resp, e := c.CheckAddress("0xef4fad847e4078828e32327536f2c1b8a5f53630")
+	if e != nil {
+		fmt.Print(e)
+	}
+
+	exc := strings.Fields(resp)
+	if "Uniswap" == exc[0]{
+		fmt.Println("Successfull")
 	}
 }
