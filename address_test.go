@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestGetAddress(t *testing.T) {
@@ -56,7 +57,7 @@ func TestGetAddresses(t *testing.T) {
 }
 
 func TestCheckAddress(t *testing.T) {
-	fmt.Println("===== TESTING CHECK ADDRESS =====")
+	//fmt.Println("===== TESTING CHECK ADDRESS =====")
 
 	c, e := New()
 	resp, e := c.CheckAddress("0xef4fad847e4078828e32327536f2c1b8a5f53630")
@@ -67,5 +68,23 @@ func TestCheckAddress(t *testing.T) {
 	exc := strings.Fields(resp)
 	if "Uniswap" == exc[0]{
 		fmt.Println("Successfull")
+	}
+}
+
+
+func BenchmarkClient_CheckAddress(b *testing.B) {
+	c, _ := New()
+
+	for i := 0; i < b.N; i++ {
+		resp, e := c.CheckAddress("0xef4fad847e4078828e32327536f2c1b8a5f53630")
+		if e != nil {
+			time.Sleep(5000)
+			fmt.Print(e)
+		}
+
+		exc := strings.Fields(resp)
+		if "Uniswap" == exc[0]{
+			//fmt.Println("Successfull")
+		}
 	}
 }
