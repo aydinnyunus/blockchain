@@ -2,6 +2,9 @@ package blockchain
 
 import (
 	"fmt"
+	"golang.org/x/net/html"
+	"io"
+	"net/http"
 	"strings"
 )
 
@@ -61,6 +64,34 @@ type Out struct {
 	Script  string `json:"script"`
 }
 
+func isTitleElement(n *html.Node) bool {
+	return n.Type == html.ElementNode && n.Data == "title"
+}
+
+func traverse(n *html.Node) (string, bool) {
+	if isTitleElement(n) {
+		return n.FirstChild.Data, true
+	}
+
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		result, ok := traverse(c)
+		if ok {
+			return result, ok
+		}
+	}
+
+	return "", false
+}
+
+func GetHtmlTitle(r io.Reader) (string, bool) {
+	doc, err := html.Parse(r)
+	if err != nil {
+		panic("Fail to parse html")
+	}
+
+	return traverse(doc)
+}
+
 func (c *Client) GetAddress(address string) (*Address, error) {
 	rsp := &Address{}
 	var path = "/address/" + address
@@ -81,4 +112,18 @@ func (c *Client) GetAddresses(addresses []string) (*MultiAddr, error) {
 		fmt.Print(e)
 	}
 	return rsp, e
+}
+
+func (c *Client) CheckAddress(address string) (string, error) {
+	resp, err := http.Get("https://etherscan.io/address/" + address)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	if t, ok := GetHtmlTitle(resp.Body); ok {
+		return t, err
+	} else {
+		return "", err
+	}
 }
