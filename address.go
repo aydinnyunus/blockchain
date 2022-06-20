@@ -18,6 +18,19 @@ type Address struct {
 	Txs           []*Tx  `json:"txs"`
 }
 
+type ETHAddress struct {
+	Hash                     string `json:"hash"`
+	Nonce                    string `json:"nonce"`
+	Balance                  string `json:"balance"`
+	TransactionCount         string `json:"transactionCount"`
+	InternalTransactionCount string `json:"internalTransactionCount"`
+	TotalSent                string `json:"totalSent"`
+	TotalReceived            string `json:"totalReceived"`
+	TotalFees                string `json:"totalFees"`
+	LastUpdatedAtNumber      string `json:"lastUpdatedAtNumber"`
+	TokenTransferCount       string `json:"tokenTransferCount"`
+}
+
 type MultiAddr struct {
 	Addresses []*Address `json:"addresses"`
 	Txs       []*Tx      `json:"txs"`
@@ -64,6 +77,29 @@ type Out struct {
 	Script  string `json:"script"`
 }
 
+type ETHResponse struct {
+	Transactions []struct {
+		Hash                 string        `json:"hash"`
+		BlockHash            string        `json:"blockHash"`
+		BlockNumber          string        `json:"blockNumber"`
+		To                   string        `json:"to"`
+		From                 string        `json:"from"`
+		Value                string        `json:"value"`
+		Nonce                string        `json:"nonce"`
+		GasPrice             string        `json:"gasPrice"`
+		GasLimit             string        `json:"gasLimit"`
+		GasUsed              string        `json:"gasUsed"`
+		TransactionIndex     string        `json:"transactionIndex"`
+		Success              bool          `json:"success"`
+		State                string        `json:"state"`
+		Timestamp            string        `json:"timestamp"`
+		InternalTransactions []interface{} `json:"internalTransactions"`
+		Data                 string        `json:"data,omitempty"`
+	} `json:"transactions"`
+	Page string `json:"page"`
+	Size int    `json:"size"`
+}
+
 func isTitleElement(n *html.Node) bool {
 	return n.Type == html.ElementNode && n.Data == "title"
 }
@@ -96,6 +132,28 @@ func (c *Client) GetAddress(address string) (*Address, error) {
 	rsp := &Address{}
 	var path = "/address/" + address
 	e := c.loadResponse(path, rsp, true)
+
+	if e != nil {
+		fmt.Print(e)
+	}
+	return rsp, e
+}
+
+func (c *Client) GetETHAddress(address string) (*ETHResponse, error) {
+	rsp := &ETHResponse{}
+	var path = "/v2/eth/data/account/" + address
+	e := c.loadETHResponse(path, &rsp, false)
+
+	if e != nil {
+		fmt.Print(e)
+	}
+	return rsp, e
+}
+
+func (c *Client) GetETHAddressSummary(address string, getSummary bool) (*ETHAddress, error) {
+	rsp := &ETHAddress{}
+	var path = "/v2/eth/data/account/" + address
+	e := c.loadETHResponse(path, &rsp, getSummary)
 
 	if e != nil {
 		fmt.Print(e)
