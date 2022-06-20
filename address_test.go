@@ -15,7 +15,7 @@ func TestGetAddress(t *testing.T) {
 	if e != nil {
 		fmt.Print(e)
 	}
-
+	fmt.Println(resp.Address)
 	fmt.Println(resp.Hash160)
 	fmt.Println(resp.Address)
 	fmt.Println(resp.NTx)
@@ -54,6 +54,21 @@ func TestGetAddresses(t *testing.T) {
 			fmt.Println(resp.Txs[i].Inputs[j].PrevOut.Spent)
 		}
 	}
+}
+
+func TestGetETHAddress(t *testing.T) {
+	fmt.Println("===== TESTING ADDRESS =====")
+
+	c, e := New()
+	resp, e := c.GetETHAddress("0x7444bce361ead96a737b351899d30f4df1e16900")
+	if e != nil {
+		fmt.Print(e)
+	}
+
+	for i, _ := range resp.Transactions{
+		fmt.Println(resp.Transactions[i].Hash)
+	}
+
 }
 
 func TestCheckAddress(t *testing.T) {
