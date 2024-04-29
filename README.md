@@ -9,6 +9,14 @@ Documentation: https://godoc.org/github.com/alfg/blockchain
 
 ## Installation
 
+### Packages
+
+#### Linux
+- Debian unstable: `apt install golang-github-aydinnyunus-blockchain-dev`
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/go:github-aydinnyunus-blockchain.svg)](https://repology.org/project/go:github-aydinnyunus-blockchain/versions)
+
+From source
 ```
 go get github.com/alfg/blockchain
 ```
